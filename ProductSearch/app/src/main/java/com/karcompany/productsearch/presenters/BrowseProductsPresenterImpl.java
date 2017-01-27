@@ -1,10 +1,11 @@
 package com.karcompany.productsearch.presenters;
 
+import com.karcompany.productsearch.config.AppConfig;
 import com.karcompany.productsearch.models.ProductSearchApiResponse;
 import com.karcompany.productsearch.models.Result;
 import com.karcompany.productsearch.networking.ApiRepo;
 import com.karcompany.productsearch.networking.NetworkError;
-import com.karcompany.productsearch.views.BrowseImagesView;
+import com.karcompany.productsearch.views.BrowseProductsView;
 
 import javax.inject.Inject;
 
@@ -19,23 +20,25 @@ import rx.subscriptions.CompositeSubscription;
 
 public class BrowseProductsPresenterImpl implements BrowseProductsPresenter, ApiRepo.GetImagesApiCallback {
 
-	private BrowseImagesView mView;
+	private BrowseProductsView mView;
 
-	@Inject
-	ApiRepo mApiRepo;
+	private ApiRepo mApiRepo;
 
 	private boolean mIsLoading;
 	private CompositeSubscription subscriptions;
 
 	private Result mSelectedProduct;
 
+	private AppConfig mAppConfig;
+
 	@Inject
-	public BrowseProductsPresenterImpl(ApiRepo apiRepo) {
+	public BrowseProductsPresenterImpl(ApiRepo apiRepo, AppConfig appConfig) {
 		mApiRepo = apiRepo;
+		mAppConfig = appConfig;
 	}
 
 	@Override
-	public void setView(BrowseImagesView browseUsersView) {
+	public void setView(BrowseProductsView browseUsersView) {
 		mView = browseUsersView;
 		subscriptions = new CompositeSubscription();
 	}
@@ -68,7 +71,7 @@ public class BrowseProductsPresenterImpl implements BrowseProductsPresenter, Api
 	}
 
 	@Override
-	public void loadImages(long pageNo, String searchTerm) {
+	public void loadProducts(long pageNo, String searchTerm) {
 		mIsLoading = true;
 		Subscription subscription = mApiRepo.getProducts(pageNo, searchTerm, this);
 		subscriptions.add(subscription);
@@ -105,6 +108,7 @@ public class BrowseProductsPresenterImpl implements BrowseProductsPresenter, Api
 	@Override
 	public void setSelectedProduct(Result product) {
 		mSelectedProduct = product;
+		mAppConfig.addToRecent(product);
 	}
 
 	@Override

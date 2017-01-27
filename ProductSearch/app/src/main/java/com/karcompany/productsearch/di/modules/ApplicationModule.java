@@ -1,14 +1,21 @@
 package com.karcompany.productsearch.di.modules;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.karcompany.productsearch.ProductSearchApplication;
+import com.karcompany.productsearch.config.AppConfig;
 import com.karcompany.productsearch.events.RxBus;
 import com.karcompany.productsearch.networking.ApiRepo;
 import com.karcompany.productsearch.presenters.BrowseProductsPresenter;
 import com.karcompany.productsearch.presenters.BrowseProductsPresenterImpl;
-import com.karcompany.productsearch.presenters.ProductDetailsPresenter;
 import com.karcompany.productsearch.presenters.ProductDetailsPresenterImpl;
+import com.karcompany.productsearch.presenters.ProductDetailsPresenter;
+import com.karcompany.productsearch.presenters.ProductImagesPresenter;
+import com.karcompany.productsearch.presenters.ProductImagesPresenterImpl;
+import com.karcompany.productsearch.presenters.RecentlyViewedPresenter;
+import com.karcompany.productsearch.presenters.RecentlyViewedPresenterImpl;
 
 import javax.inject.Singleton;
 
@@ -32,8 +39,8 @@ public class ApplicationModule {
 	}
 
 	@Provides @Singleton
-	BrowseProductsPresenter provideBrowseProductsPresenter(ApiRepo apiRepo) {
-		return new BrowseProductsPresenterImpl(apiRepo);
+	BrowseProductsPresenter provideBrowseProductsPresenter(ApiRepo apiRepo, AppConfig appConfig) {
+		return new BrowseProductsPresenterImpl(apiRepo, appConfig);
 	}
 
 	@Provides @Singleton
@@ -42,7 +49,27 @@ public class ApplicationModule {
 	}
 
 	@Provides @Singleton
-	ProductDetailsPresenter provideProductDetailsPresenter(BrowseProductsPresenter browseProductsPresenter) {
-		return new ProductDetailsPresenterImpl(browseProductsPresenter);
+	ProductDetailsPresenter provideProductDetailsPresenter(ApiRepo apiRepo, BrowseProductsPresenter browseProductsPresenter) {
+		return new ProductDetailsPresenterImpl(apiRepo, browseProductsPresenter);
+	}
+
+	@Provides @Singleton
+	ProductImagesPresenter provideProductImagesPresenter(ProductDetailsPresenter productDetailsPresenter) {
+		return new ProductImagesPresenterImpl(productDetailsPresenter);
+	}
+
+	@Provides @Singleton
+	SharedPreferences providesSharedPreferences() {
+		return PreferenceManager.getDefaultSharedPreferences(this.application);
+	}
+
+	@Provides @Singleton
+	AppConfig provideAppConfig(SharedPreferences sharedPreferences) {
+		return new AppConfig(sharedPreferences);
+	}
+
+	@Provides @Singleton
+	RecentlyViewedPresenter provideRecentlyViewedPresenter(AppConfig appConfig) {
+		return new RecentlyViewedPresenterImpl(appConfig);
 	}
 }

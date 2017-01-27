@@ -8,7 +8,11 @@ import com.karcompany.productsearch.networking.NetworkModule;
 import com.karcompany.productsearch.views.activities.BaseActivity;
 import com.karcompany.productsearch.views.activities.ProductSearchActivity;
 import com.karcompany.productsearch.views.adapters.BrowseProductsAdapter;
+import com.karcompany.productsearch.views.adapters.ProductImagesAdapter;
 import com.karcompany.productsearch.views.fragments.BrowseProductsFragment;
+import com.karcompany.productsearch.views.fragments.ProductDetailsFragment;
+import com.karcompany.productsearch.views.fragments.ProductImagesFragment;
+import com.karcompany.productsearch.views.fragments.RecentlyViewedFragment;
 
 import javax.inject.Singleton;
 
@@ -31,6 +35,14 @@ public interface ApplicationComponent {
 	void inject(BrowseProductsFragment browseProductsFragment);
 
 	void inject(ProductSearchActivity productSearchActivity);
+
+	void inject(ProductDetailsFragment productDetailsFragment);
+
+	void inject(ProductImagesAdapter productImagesAdapter);
+
+	void inject(ProductImagesFragment productImagesFragment);
+
+	void inject(RecentlyViewedFragment recentlyViewedFragment);
 
 	//Exposed to sub-graphs.
 	Context context();

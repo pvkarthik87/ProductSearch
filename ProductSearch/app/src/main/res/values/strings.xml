@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">FindProducts</string>
     <string name="search_title">Search Products</string>
+    <string name="product_details">Product Details</string>
+    <string name="price_seperator">/</string>
+    <string name="price_format">%.2f</string>
+    <string name="history">Recently viewed items</string>
+    <string name="view_history">Recent</string>
 </resources>

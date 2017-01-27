@@ -2,6 +2,7 @@ package com.karcompany.productsearch.networking;
 
 import com.karcompany.productsearch.logging.DefaultLogger;
 import com.karcompany.productsearch.models.ProductSearchApiResponse;
+import com.karcompany.productsearch.models.productdetailsresponse.ProductDetails;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -22,6 +23,12 @@ public class ApiRepo {
 
 	public interface GetImagesApiCallback {
 		void onSuccess(ProductSearchApiResponse response);
+
+		void onError(NetworkError networkError);
+	}
+
+	public interface ProductDetailsApiCallback {
+		void onSuccess(ProductDetails response);
 
 		void onError(NetworkError networkError);
 	}
@@ -62,6 +69,36 @@ public class ApiRepo {
 					public void onNext(ProductSearchApiResponse response) {
 						DefaultLogger.d(TAG, "onNext");
 						callback.onSuccess(response);
+					}
+				});
+	}
+
+	public Subscription getProductDetails(String productId, final ProductDetailsApiCallback callback) {
+		return mRestService.getProductDetails(productId)
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribeOn(Schedulers.newThread())
+				.onErrorResumeNext(new Func1<Throwable, Observable<? extends ProductDetails>>() {
+					@Override
+					public Observable<? extends ProductDetails> call(Throwable throwable) {
+						return Observable.error(throwable);
+					}
+				})
+				.subscribe(new Subscriber<ProductDetails>() {
+					@Override
+					public void onCompleted() {
+						DefaultLogger.d(TAG, "onCompleted");
+					}
+
+					@Override
+					public void onError(Throwable e) {
+						DefaultLogger.d(TAG, "onError");
+						callback.onError(new NetworkError(e));
+					}
+
+					@Override
+					public void onNext(ProductDetails productDetails) {
+						DefaultLogger.d(TAG, "onNext");
+						callback.onSuccess(productDetails);
 					}
 				});
 	}

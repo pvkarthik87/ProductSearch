@@ -78,4 +78,18 @@ public class ProductSearchActivity extends BaseActivity implements HasComponent<
 		}
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId() == R.id.action_recent) {
+			goToRecentView();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void goToRecentView() {
+		Intent intent = new Intent(this, RecentlyViewedActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(intent);
+	}
 }

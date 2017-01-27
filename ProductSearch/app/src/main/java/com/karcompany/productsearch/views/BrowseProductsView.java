@@ -8,7 +8,7 @@ import com.karcompany.productsearch.models.ProductSearchApiResponse;
  * View interface which notifies presenter to perform some operations.
  */
 
-public interface BrowseImagesView {
+public interface BrowseProductsView {
 
 	void onDataReceived(ProductSearchApiResponse response);
 

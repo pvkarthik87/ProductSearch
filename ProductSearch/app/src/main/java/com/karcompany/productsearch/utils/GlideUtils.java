@@ -1,5 +1,6 @@
 package com.karcompany.productsearch.utils;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.widget.ImageView;
@@ -34,10 +35,10 @@ public class GlideUtils {
 		mColourList = Collections.unmodifiableList(colourList);
 	}
 
-	public static void loadImage(Fragment fragment, String url, ImageView gifView) {
+	public static void loadImage(Context ctx, String url, ImageView gifView) {
 		if (TextUtils.isEmpty(url)) return;
 		Glide
-				.with(fragment)
+				.with(ctx)
 				.load(url)
 				.asBitmap()
 				.placeholder(getColorIndex())

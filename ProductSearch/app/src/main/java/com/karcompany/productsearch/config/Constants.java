@@ -13,4 +13,8 @@ public class Constants {
 
 	public static final String SERVER_BASE_URL = "https://api.mercadolibre.com/";
 
+	public static final String KEY_RECENT_VIEWED = "KEY_RECENT_VIEWED";
+
+	public static final int MAX_RECENT_ITEMS = 5;
+
 }

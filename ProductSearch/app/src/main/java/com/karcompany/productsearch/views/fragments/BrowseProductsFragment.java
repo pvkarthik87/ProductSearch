@@ -3,9 +3,10 @@ package com.karcompany.productsearch.views.fragments;
 /**
  * Created by pvkarthik on 2017-01-23.
  *
- * Images fragment which displays server data in a recycler view.
+ * Products fragment which displays server data in a recycler view.
  */
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -27,7 +28,8 @@ import com.karcompany.productsearch.logging.DefaultLogger;
 import com.karcompany.productsearch.models.ProductSearchApiResponse;
 import com.karcompany.productsearch.models.Result;
 import com.karcompany.productsearch.presenters.BrowseProductsPresenter;
-import com.karcompany.productsearch.views.BrowseImagesView;
+import com.karcompany.productsearch.views.BrowseProductsView;
+import com.karcompany.productsearch.views.activities.ProductDetailsActivity;
 import com.karcompany.productsearch.views.adapters.BrowseProductsAdapter;
 
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
-public class BrowseProductsFragment extends BaseFragment implements BrowseImagesView {
+public class BrowseProductsFragment extends BaseFragment implements BrowseProductsView {
 
 	private static final String TAG = DefaultLogger.makeLogTag(BrowseProductsFragment.class);
 
@@ -312,7 +314,10 @@ public class BrowseProductsFragment extends BaseFragment implements BrowseImages
 		mAdapter.loadData(searchTerm);
 	}
 
-	private void onProductClicked(Result image) {
-		mBrowseProductsPresenter.setSelectedProduct(image);
+	private void onProductClicked(Result product) {
+		mBrowseProductsPresenter.setSelectedProduct(product);
+		Intent intent = new Intent(getActivity(), ProductDetailsActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(intent);
 	}
 }

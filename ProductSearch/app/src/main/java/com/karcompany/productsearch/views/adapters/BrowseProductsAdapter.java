@@ -6,7 +6,6 @@ package com.karcompany.productsearch.views.adapters;
  * Recycler view adapter which displays product list data.
  */
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -38,8 +37,6 @@ import javax.inject.Inject;
 
 public class BrowseProductsAdapter extends RecyclerView.Adapter<ProductListItemViewHolder> {
 
-	private Fragment mFragment;
-	private Context mContext;
 	private Map<String, Result> mProductsDataMap;
 	private List<String> mProductIdList;
 	private ViewType mCurrentViewType;
@@ -70,8 +67,6 @@ public class BrowseProductsAdapter extends RecyclerView.Adapter<ProductListItemV
 
 	public BrowseProductsAdapter(Fragment fragment) {
 		ProductSearchApplication.getApplicationComponent().inject(this);
-		mFragment = fragment;
-		mContext = fragment.getContext();
 		mProductsDataMap = new LinkedHashMap<>();
 		mProductIdList = new ArrayList<>(4);
 	}
@@ -82,22 +77,22 @@ public class BrowseProductsAdapter extends RecyclerView.Adapter<ProductListItemV
 		if(viewType == VIEW_TYPE_ITEM) {
 			switch (mCurrentViewType) {
 				case LIST: {
-					view = LayoutInflater.from(mContext).inflate(R.layout.view_image_row_item_list, parent, false);
+					view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_image_row_item_list, parent, false);
 				}
 				break;
 
 				case GRID: {
-					view = LayoutInflater.from(mContext).inflate(R.layout.view_image_row_item_grid, parent, false);
+					view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_image_row_item_grid, parent, false);
 				}
 				break;
 
 				case STAGGERED: {
-					view = LayoutInflater.from(mContext).inflate(R.layout.view_image_row_item_staggered, parent, false);
+					view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_image_row_item_staggered, parent, false);
 				}
 				break;
 			}
 		} else {
-			view = LayoutInflater.from(mContext).inflate(R.layout.loading_progress, parent, false);
+			view = LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_progress, parent, false);
 		}
 		return new ProductListItemViewHolder(view);
 	}
@@ -119,7 +114,7 @@ public class BrowseProductsAdapter extends RecyclerView.Adapter<ProductListItemV
 						holder.titleTxtView.setText(product.getTitle());
 					}
 					holder.priceTxtView.setText(String.format(Locale.getDefault(), "%.2f", product.getPrice()));
-					GlideUtils.loadImage(mFragment, product.getThumbnail(), holder.imageImgView);
+					GlideUtils.loadImage(holder.itemView.getContext(), product.getThumbnail(), holder.imageImgView);
 				}
 				holder.itemView.setTag(position);
 				holder.itemView.setOnClickListener(mOnClickListener);
@@ -197,13 +192,23 @@ public class BrowseProductsAdapter extends RecyclerView.Adapter<ProductListItemV
 				} else {
 					notifyDataSetChanged();
 				}
-
 			}
 		}
 	}
 
 	public void addData(ArrayList<Result> imageList) {
+	}
 
+	public void addData(List<Result> productList) {
+		clearData();
+		if (productList != null) {
+			mTotalListCount = productList.size();
+			for (Result image : productList) {
+				mProductsDataMap.put(image.getId(), image);
+				mProductIdList.add(image.getId());
+			}
+			notifyDataSetChanged();
+		}
 	}
 
 	private long getNextPageNumber() {
@@ -217,7 +222,7 @@ public class BrowseProductsAdapter extends RecyclerView.Adapter<ProductListItemV
 
 	public void loadMore() {
 		if(!isDataLoadCompleted()) {
-			mBrowseProductsPresenter.loadImages(getNextPageNumber(), mSearchTerm);
+			mBrowseProductsPresenter.loadProducts(getNextPageNumber(), mSearchTerm);
 		}
 	}
 
